@@ -133,6 +133,23 @@ namespace Mono.Fuse.NETStandard {
 			get {return (IntPtr) (long) file_handle;}
 			set {file_handle = (ulong) (long) value;}
 		}
+
+		/// <summary>
+		/// Provides a way to store a managed object in <see cref="Handle"/> using GCHandle.
+		/// Note: Remember to set this to null in *Release method to avoid memory leaks!
+		/// </summary>
+		public object HandleRef {
+			get => Handle != IntPtr.Zero ? ((GCHandle) Handle).Target : null;
+			set {
+				if (Handle != IntPtr.Zero) {
+					((GCHandle) Handle).Free ();
+					Handle = IntPtr.Zero;
+				}
+
+				if (value != null)
+					Handle = (IntPtr) GCHandle.Alloc (value);
+			}
+		}
 	}
 
 	delegate int GetPathStatusCb (
@@ -186,8 +203,7 @@ namespace Mono.Fuse.NETStandard {
 	delegate int ReadHandleCb (
 			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 			string path, 
-			[Out, MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.U1, SizeParamIndex=2)]
-			byte[] buf, ulong size, long offset, IntPtr info, out int bytesRead);
+			IntPtr buf, ulong size, long offset, IntPtr info, out int bytesRead);
 	delegate int WriteHandleCb (
 			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
 			string path, 
@@ -378,6 +394,7 @@ namespace Mono.Fuse.NETStandard {
 		Dictionary <string, string> opts = new Dictionary <string, string> ();
 		private Operations ops;
 		private IntPtr opsp;
+		private IntPtr fusep;
 
 		protected FileSystem (string mountPoint)
 		{
@@ -662,6 +679,7 @@ namespace Mono.Fuse.NETStandard {
 				{"OnChangePathTimes",             (to, from) => {to.utime       = from._OnChangePathTimes;} },
 				{"OnOpenHandle",                  (to, from) => {to.open        = from._OnOpenHandle;} },
 				{"OnReadHandle",                  (to, from) => {to.read        = from._OnReadHandle;} },
+				{"OnReadHandleUnsafe",            (to, from) => {to.read        = from._OnReadHandle;} },
 				{"OnWriteHandle",                 (to, from) => {to.write       = from._OnWriteHandle;} },
 				{"OnGetFileSystemStatus",         (to, from) => {to.statfs      = from._OnGetFileSystemStatus;} },
 				{"OnFlushHandle",                 (to, from) => {to.flush       = from._OnFlushHandle;} },
@@ -755,7 +773,7 @@ namespace Mono.Fuse.NETStandard {
 
 		public void Stop ()
 		{
-			mfh_fuse_exit (GetOperationContext ().fuse);
+			mfh_fuse_exit (fusep);
 		}
 
 		protected static FileSystemOperationContext GetOperationContext ()
@@ -1129,13 +1147,23 @@ namespace Mono.Fuse.NETStandard {
 			return Errno.ENOSYS;
 		}
  
-		private int _OnReadHandle (string path, byte[] buf, ulong size, long offset, IntPtr fi, out int bytesWritten)
+		private int _OnReadHandle (string path, IntPtr buf, ulong size, long offset, IntPtr fi, out int bytesWritten)
 		{
 			Errno errno;
 			try {
 				OpenedPathInfo info = new OpenedPathInfo ();
 				CopyOpenedPathInfo (fi, info);
-				errno = OnReadHandle (path, info, buf, offset, out bytesWritten);
+
+				// First try the IntPtr kind and see if the file system implemented it.
+				errno = OnReadHandleUnsafe (path, info, buf, size, offset, out bytesWritten);
+
+				// If it wasn't implemented, fall back to the byte[] array kind, but still pool the buffers.
+				if (errno == Errno.ENOSYS) {
+					byte[] buffer = new byte[size];
+					errno = OnReadHandle (path, info, buffer, offset, out bytesWritten);
+					Marshal.Copy (buffer, 0, buf, bytesWritten);
+				}
+
 				if (errno == 0)
 					CopyOpenedPathInfo (info, fi);
 			}
@@ -1148,6 +1176,12 @@ namespace Mono.Fuse.NETStandard {
 		}
 
 		protected virtual Errno OnReadHandle (string file, OpenedPathInfo info, byte[] buf, long offset, out int bytesWritten)
+		{
+			bytesWritten = 0;
+			return Errno.ENOSYS;
+		}
+
+		protected virtual Errno OnReadHandleUnsafe (string file, OpenedPathInfo info, IntPtr buf, ulong size, long offset, out int bytesWritten)
 		{
 			bytesWritten = 0;
 			return Errno.ENOSYS;
@@ -1584,6 +1618,9 @@ namespace Mono.Fuse.NETStandard {
 		private IntPtr _OnInit (IntPtr conn)
 		{
 			try {
+				// Store the fuse pointer for later use.
+				FileSystemOperationContext context = GetOperationContext ();
+				fusep = context.fuse;
 				OnInit (new ConnectionInformation (conn));
 				return opsp;
 			}
