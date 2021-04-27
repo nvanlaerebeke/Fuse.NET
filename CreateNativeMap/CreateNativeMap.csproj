@@ -5,7 +5,7 @@
     <Authors>Miguel de Icaza, Jonathan Pryor, Alexey Kolpakov</Authors>
     <Description>Port of mono's `create-native-map` tool to NET Standart</Description>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
