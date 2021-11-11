@@ -22,10 +22,16 @@ apt install libtool-bin libglib2.0-dev
 
 ## Samples
 
-To run examples clone this repository, run `build-libs.sh` and then run projects from `example/` folder.
+To run examples clone this repository, run `build-libs.sh`.  
 
 ```bash
 ./build-libs.sh
+```
 
-./example/
+The native library will be but in `./nativelibs` and the examples will be put in `./bin`.
+
+To run the `RedirectFS` sample that just mirrors a directory, run:
+
+```bash
+./bin/RedirectFS/RedirectFS <destination> <source>
 ```

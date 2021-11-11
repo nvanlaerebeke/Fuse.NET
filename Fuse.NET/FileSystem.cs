@@ -785,10 +785,10 @@ namespace Fuse.NET {
 		}
 
 		[DllImport (LIB, SetLastError=true)]
-		private static extern int Mono_Fuse_NETStandard_FromOpenedPathInfo (OpenedPathInfo source, IntPtr dest);
+		private static extern int Fuse_NET_FromOpenedPathInfo (OpenedPathInfo source, IntPtr dest);
 
 		[DllImport (LIB, SetLastError=true)]
-		private static extern int Mono_Fuse_NETStandard_ToOpenedPathInfo (IntPtr source, [Out] OpenedPathInfo dest);
+		private static extern int Fuse_NET_ToOpenedPathInfo (IntPtr source, [Out] OpenedPathInfo dest);
 
 		private static void CopyFlock (IntPtr source, out Flock dest)
 		{
@@ -840,14 +840,14 @@ namespace Fuse.NET {
 
 		private static void CopyOpenedPathInfo (IntPtr source, OpenedPathInfo dest)
 		{
-			Mono_Fuse_NETStandard_ToOpenedPathInfo (source, dest);
+			Fuse_NET_ToOpenedPathInfo (source, dest);
 			dest.flags = NativeConvert.ToOpenFlags ((int) dest.flags);
 		}
 
 		private static void CopyOpenedPathInfo (OpenedPathInfo source, IntPtr dest)
 		{
 			source.flags = (OpenFlags) NativeConvert.FromOpenFlags (source.flags);
-			Mono_Fuse_NETStandard_FromOpenedPathInfo (source, dest);
+			Fuse_NET_FromOpenedPathInfo (source, dest);
 		}
 
 		private int _OnGetPathStatus (string path, IntPtr stat)

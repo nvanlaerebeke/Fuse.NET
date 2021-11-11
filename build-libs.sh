@@ -16,6 +16,10 @@ init_configuration () {
     fi
 }
 
+clean () {
+    rm -rf "bin" "nativelibs"
+}
+
 build_managed () {
     dotnet build Fuse.NET/Fuse.NET.csproj -c "$CONFIGURATION"
 }
@@ -53,6 +57,7 @@ assert_exists dotnet
 assert_exists libtool
 assert_exists gcc
 init_configuration
+clean
 build_managed
 build_native
 build_samples
