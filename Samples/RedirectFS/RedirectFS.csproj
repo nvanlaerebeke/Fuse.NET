@@ -16,7 +16,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Fuse.NET\Fuse.NET.csproj" />
+    <ProjectReference Include="..\..\src\Fuse.NET\Fuse.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />

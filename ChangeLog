@@ -1,5 +1,12 @@
+2021-11-11	Nico van Laerebeke
+	* Port to .NET 5
+	* Improved README
+	* Extended build script
+	* Changed project structure to what I'm used to
+	*Added Jenkinsfile for publishing to private nuget repo
+
 2018-01-05  Alexey Kolpakov <mail@alhimik.me>
-	Port to .Net Standard 2
+	* Port to .Net Standard 2
 
 2016-06-08  Justin Needham <jneedhamspkt@gmail.com>
 	Migrate from gmcs to mcs for Mono 4.*

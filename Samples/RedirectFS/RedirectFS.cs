@@ -357,9 +357,11 @@ namespace Fuse.NET.Samples {
 		public static void Main (string[] args)
 		{
 			using (RedirectFS fs = new RedirectFS ()) {
-				string[] unhandled = fs.ParseFuseArguments (args);
+				fs.MountPoint = "/mnt/test/dest";
+				fs.basedir = "/mnt/test/source";
+				/*string[] unhandled = fs.ParseFuseArguments (args);
 				if (!fs.ParseArguments (unhandled))
-					return;
+					return;*/
 				fs.Start ();
 			}
 		}

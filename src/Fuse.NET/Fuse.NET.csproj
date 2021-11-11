@@ -3,7 +3,7 @@
     <AssemblyTitle>Fuse.NET.dll</AssemblyTitle>
     <AssemblyName>Fuse.NET</AssemblyName>
     <PackageId>Fuse.NET</PackageId>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>0.0.1</PackageVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/nvanlaerebeke/Fuse.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nvanlaerebeke/Fuse.NET</RepositoryUrl>
@@ -13,9 +13,12 @@
     <PackageTags>mono fuse filesystem linux unix</PackageTags>
     <RootNamespace>Fuse.NET</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <PublicSign>false</PublicSign>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\nativelibs\linux-x64\libMonoFuseHelper.so">
+    <Content Include="..\..\nativelibs\linux-x64\libMonoFuseHelper.so">
       <PackagePath>runtimes/linux-x64/native/libMonoFuseHelper.so</PackagePath>
       <Pack>true</Pack>
     </Content>

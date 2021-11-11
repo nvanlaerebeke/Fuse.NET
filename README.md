@@ -22,7 +22,7 @@ apt install libtool-bin libglib2.0-dev
 
 ## Samples
 
-To run examples clone this repository, run `build-libs.sh`.  
+To run examples clone this repository, run `build.sh`.  
 
 ```bash
 ./build-libs.sh
