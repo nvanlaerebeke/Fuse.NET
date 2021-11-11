@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyTitle>Mono.Fuse.NETStandard.dll</AssemblyTitle>
-    <AssemblyName>Mono.Fuse.NETStandard</AssemblyName>
-    <PackageId>Mono.Fuse.NETStandard</PackageId>
+    <AssemblyTitle>Fuse.NET.dll</AssemblyTitle>
+    <AssemblyName>Fuse.NET</AssemblyName>
+    <PackageId>Fuse.NET</PackageId>
     <PackageVersion>1.1.0</PackageVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/alhimik45/Mono.Fuse.NETStandard</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/alhimik45/Mono.Fuse.NETStandard</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/nvanlaerebeke/Fuse.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nvanlaerebeke/Fuse.NET</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Authors>Jonathan Pryor, Alexey Kolpakov</Authors>
-    <Description>Port of Mono.Fuse package to NET Standart: C# bindings for FUSE</Description>
+    <Authors>Nico van Laerebeke, Jonathan Pryor, Alexey Kolpakov</Authors>
+    <Description>Port of Mono.Fuse package to NET: C# bindings for FUSE</Description>
     <PackageTags>mono fuse filesystem linux unix</PackageTags>
-    <RootNamespace>Mono.Fuse.NETStandard</RootNamespace>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Fuse.NET</RootNamespace>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="..\nativelibs\linux-x64\libMonoFuseHelper.so">

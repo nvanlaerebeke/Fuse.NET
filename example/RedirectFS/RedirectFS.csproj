@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Mono.Fuse.NETStandard.Samples</RootNamespace>
+    <RootNamespace>Fuse.NET.Samples</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -16,7 +16,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Mono.Fuse.NETStandard\Mono.Fuse.NETStandard.csproj" />
+    <ProjectReference Include="..\..\Fuse.NET\Fuse.NET.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />

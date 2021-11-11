@@ -6,7 +6,7 @@
 //
 // (C) 2006 Jonathan Pryor
 //
-// Mono.Fuse.NETStandard example program
+// Fuse.NET example program
 //
 
 //
@@ -36,7 +36,7 @@ using System.Diagnostics;
 using System.Text;
 using Mono.Unix.Native;
 
-namespace Mono.Fuse.NETStandard.Samples {
+namespace Fuse.NET.Samples {
 	internal class HelloFs : FileSystem {
 		static readonly byte[] hello_str = Encoding.UTF8.GetBytes ("Hello World!\n");
 		const string hello_path = "/hello";

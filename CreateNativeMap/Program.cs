@@ -29,15 +29,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using Mono.Fuse.NETStandard;
+using Fuse.NET;
 
 delegate void CreateFileHandler (string assembly_name, string file_prefix);
 delegate void AssemblyAttributesHandler (Assembly assembly);
@@ -52,16 +53,15 @@ namespace CreateNativeMap
 
 		public static int Main(string[] args)
 		{
-			FileGenerator[] generators = new FileGenerator[]
-			{
+			FileGenerator[] generators = {
 				new HeaderFileGenerator(),
 				new SourceFileGenerator(),
 				new ConvertFileGenerator(),
 				new ConvertDocFileGenerator(),
 			};
 
-			Configuration config = new Configuration();
-			bool exit = false;
+			var config = new Configuration();
+			var exit = false;
 			try
 			{
 				exit = !config.Parse(args);
@@ -85,11 +85,11 @@ namespace CreateNativeMap
 			foreach (FileGenerator g in generators)
 			{
 				g.Configuration = config;
-				composite.FileCreators += new CreateFileHandler(g.CreateFile);
+				composite.FileCreators += g.CreateFile;
 				composite.AssemblyAttributesHandler +=
-					new AssemblyAttributesHandler(g.WriteAssemblyAttributes);
-				composite.TypeHandler += new TypeHandler(g.WriteType);
-				composite.FileClosers += new CloseFileHandler(g.CloseFile);
+					g.WriteAssemblyAttributes;
+				composite.TypeHandler += g.WriteType;
+				composite.FileClosers += g.CloseFile;
 			}
 
 			return composite.Run(config);
@@ -164,18 +164,18 @@ namespace CreateNativeMap
 		static Configuration()
 		{
 			handlers = new Dictionary<string, ArgumentHandler>();
-			handlers["autoconf-header"] = delegate(Configuration c, string name, string value) { c.iheaders.Add("ah:" + name); };
-			handlers["autoconf-member"] = delegate(Configuration c, string name, string value) { c.optionals.Add(name); };
-			handlers["impl-header"] = delegate(Configuration c, string name, string value) { c.iheaders.Add(name); };
+			handlers["autoconf-header"] = delegate(Configuration c, string name, string _) { c.iheaders.Add("ah:" + name); };
+			handlers["autoconf-member"] = delegate(Configuration c, string name, string _) { c.optionals.Add(name); };
+			handlers["impl-header"] = delegate(Configuration c, string name, string _) { c.iheaders.Add(name); };
 			handlers["impl-macro"] = delegate(Configuration c, string name, string value)
 			{
 				if (value != null)
 					name += "=" + value;
 				c.imacros.Add(name);
 			};
-			handlers["library"] = delegate(Configuration c, string name, string value) { c.libraries.Add(name); };
-			handlers["exclude-native-symbol"] = delegate(Configuration c, string name, string value) { c.excludes.Add(name); };
-			handlers["public-header"] = delegate(Configuration c, string name, string value) { c.pheaders.Add(name); };
+			handlers["library"] = delegate(Configuration c, string name, string _) { c.libraries.Add(name); };
+			handlers["exclude-native-symbol"] = delegate(Configuration c, string name, string _) { c.excludes.Add(name); };
+			handlers["public-header"] = delegate(Configuration c, string name, string _) { c.pheaders.Add(name); };
 			handlers["public-macro"] = delegate(Configuration c, string name, string value)
 			{
 				if (value != null)
@@ -201,10 +201,6 @@ namespace CreateNativeMap
 				value = value.Replace(".", "_");
 				c.renameNamespaces[name] = value;
 			};
-		}
-
-		public Configuration()
-		{
 		}
 
 		public List<string> NativeLibraries
@@ -568,7 +564,7 @@ namespace CreateNativeMap
 #endif
 			sb.Append(method.ReturnType == typeof(string)
 				? "char*"
-				: MapUtils.GetNativeType(method.ReturnType));
+				: GetNativeType(method.ReturnType));
 			sb.Append(" ").Append(name).Append(" (");
 
 
@@ -606,7 +602,7 @@ namespace CreateNativeMap
 		{
 			public int Compare(FieldInfo m1, FieldInfo m2)
 			{
-				return Compare((MemberInfo) m1, (MemberInfo) m2);
+				return Compare(m1, (MemberInfo) m2);
 			}
 
 			public int Compare(MemberInfo m1, MemberInfo m2)
@@ -626,7 +622,7 @@ namespace CreateNativeMap
 		{
 			public int Compare(string s1, string s2)
 			{
-				if (object.ReferenceEquals(s1, s2))
+				if (ReferenceEquals(s1, s2))
 					return 0;
 				if (s1 == null)
 					return 1;
@@ -763,7 +759,7 @@ namespace CreateNativeMap
 		{
 			sh = File.CreateText(file_prefix + ".h");
 			file_prefix = file_prefix.Replace("../", "").Replace("/", "_");
-			this.assembly_file = assembly_name = Path.GetFileName(assembly_name);
+			assembly_file = assembly_name = Path.GetFileName(assembly_name);
 			WriteHeader(sh, assembly_name, true);
 			assembly_name = assembly_name.Replace(".dll", "").Replace(".", "_");
 			sh.WriteLine("#ifndef INC_" + assembly_name + "_" + file_prefix + "_H");
@@ -999,7 +995,7 @@ namespace CreateNativeMap
 
 			foreach (string method in Sort(methods.Keys))
 			{
-				WriteMethodDeclaration((MethodInfo) methods[method], method);
+				WriteMethodDeclaration(methods[method], method);
 			}
 
 			sh.WriteLine("\nG_END_DECLS\n");
@@ -1028,7 +1024,7 @@ namespace CreateNativeMap
 			int max_type_len = 0, max_name_len = 0, max_native_len = 0;
 			Array.ForEach(fields, delegate(FieldInfo f)
 			{
-				max_type_len = Math.Max(max_type_len, HeaderFileGenerator.GetType(f.FieldType).Length);
+				max_type_len = Math.Max(max_type_len, GetType(f.FieldType).Length);
 				max_name_len = Math.Max(max_name_len, GetNativeMemberName(f).Length);
 				string native_type = MapUtils.GetNativeType(f);
 				if (native_type != null)
@@ -1053,7 +1049,7 @@ namespace CreateNativeMap
 			sh.WriteLine("};");
 			MapAttribute map = MapUtils.GetMapAttribute(t);
 			if (map != null && map.NativeType != null && map.NativeType.Length != 0 &&
-			    t.Assembly.CodeBase.EndsWith(this.assembly_file))
+			    t.Assembly.Location.EndsWith(assembly_file))
 			{
 				sh.WriteLine();
 				sh.WriteLine(
@@ -1188,10 +1184,10 @@ namespace CreateNativeMap
 			WriteFallbackMacro("CNM_MAXUINT16", "G_MAXUINT16", ushort.MaxValue.ToString());
 			WriteFallbackMacro("CNM_MININT32", "G_MININT32", int.MinValue.ToString());
 			WriteFallbackMacro("CNM_MAXINT32", "G_MAXINT32", int.MaxValue.ToString());
-			WriteFallbackMacro("CNM_MAXUINT32", "G_MAXUINT32", uint.MaxValue.ToString() + "U");
-			WriteFallbackMacro("CNM_MININT64", "G_MININT64", long.MinValue.ToString() + "LL");
-			WriteFallbackMacro("CNM_MAXINT64", "G_MAXINT64", long.MaxValue.ToString() + "LL");
-			WriteFallbackMacro("CNM_MAXUINT64", "G_MAXUINT64", ulong.MaxValue.ToString() + "ULL");
+			WriteFallbackMacro("CNM_MAXUINT32", "G_MAXUINT32", uint.MaxValue + "U");
+			WriteFallbackMacro("CNM_MININT64", "G_MININT64", long.MinValue + "LL");
+			WriteFallbackMacro("CNM_MAXINT64", "G_MAXINT64", long.MaxValue + "LL");
+			WriteFallbackMacro("CNM_MAXUINT64", "G_MAXUINT64", ulong.MaxValue + "ULL");
 
 			sc.WriteLine(@"
 
@@ -1323,7 +1319,7 @@ namespace CreateNativeMap
 			sc.WriteLine("{");
 			sc.WriteLine("\t*r = 0;");
 			FieldInfo[] fields = t.GetFields();
-			Array.Sort<FieldInfo>(fields, MapUtils.MemberNameComparer);
+			Array.Sort(fields, MapUtils.MemberNameComparer);
 			Array values = Enum.GetValues(t);
 			foreach (FieldInfo fi in fields)
 			{
@@ -1422,7 +1418,7 @@ namespace CreateNativeMap
 			// Make 0 valid for all conversions.
 			sc.WriteLine("\tif (x == 0)\n\t\treturn 0;");
 			FieldInfo[] fields = t.GetFields();
-			Array.Sort<FieldInfo>(fields, MapUtils.MemberNameComparer);
+			Array.Sort(fields, MapUtils.MemberNameComparer);
 			foreach (FieldInfo fi in fields)
 			{
 				if (!fi.IsLiteral)

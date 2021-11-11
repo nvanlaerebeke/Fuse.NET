@@ -1,5 +1,5 @@
 //
-// Mono.Fuse/FileSystem.cs
+// FileSystem.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -39,7 +39,7 @@ using System.Text.RegularExpressions;
 using Mono.Unix;
 using Mono.Unix.Native;
 
-namespace Mono.Fuse.NETStandard {
+namespace Fuse.NET {
 
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed class FileSystemOperationContext {

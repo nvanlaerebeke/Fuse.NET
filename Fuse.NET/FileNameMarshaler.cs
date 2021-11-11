@@ -1,5 +1,5 @@
 //
-// Mono.Fuse/FileNameMarshaler.cs
+// FileNameMarshaler.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -30,7 +30,7 @@ using System;
 using System.Runtime.InteropServices;
 using Mono.Unix;
 
-namespace Mono.Fuse.NETStandard {
+namespace Fuse.NET {
 
 	class FileNameMarshaler : ICustomMarshaler {
 

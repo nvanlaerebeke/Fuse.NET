@@ -30,7 +30,7 @@
 
 using System;
 
-namespace Mono.Fuse.NETStandard
+namespace Fuse.NET
 {
 	[AttributeUsage (
 		AttributeTargets.Class    |

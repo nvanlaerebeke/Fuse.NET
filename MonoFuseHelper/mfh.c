@@ -37,10 +37,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static inline struct Mono_Fuse_NETStandard_Operations*
+static inline struct Fuse_NET_Operations*
 _mfh_get_private_data ()
 {
-	return (struct Mono_Fuse_NETStandard_Operations*) fuse_get_context()->private_data;
+	return (struct Fuse_NET_Operations*) fuse_get_context()->private_data;
 }
 
 static int
@@ -122,7 +122,7 @@ mfh_utime (const char *path, struct utimbuf *buf)
 }
 
 int
-Mono_Fuse_NETStandard_ToOpenedPathInfo (void *_from, struct Mono_Fuse_NETStandard_OpenedPathInfo *to)
+Fuse_NET_ToOpenedPathInfo (void *_from, struct Fuse_NET_OpenedPathInfo *to)
 {
 	struct fuse_file_info *from = _from;
 	memset (to, 0, sizeof (*to));
@@ -137,7 +137,7 @@ Mono_Fuse_NETStandard_ToOpenedPathInfo (void *_from, struct Mono_Fuse_NETStandar
 }
 
 int
-Mono_Fuse_NETStandard_FromOpenedPathInfo (struct Mono_Fuse_NETStandard_OpenedPathInfo *from, void *_to)
+Fuse_NET_FromOpenedPathInfo (struct Fuse_NET_OpenedPathInfo *from, void *_to)
 {
 	struct fuse_file_info *to = _to;
 	memset (to, 0, sizeof (*to));
@@ -373,7 +373,7 @@ mfh_bmap (const char *path, size_t blocksize, uint64_t *idx)
 }
 
 static void
-_to_fuse_operations (struct Mono_Fuse_NETStandard_Operations *from, struct fuse_operations *to)
+_to_fuse_operations (struct Fuse_NET_Operations *from, struct fuse_operations *to)
 {
 	memset (to, 0, sizeof(*to));
 
@@ -442,7 +442,7 @@ mfh_show_fuse_help (const char *appname)
 }
 
 int
-mfh_fuse_get_context (struct Mono_Fuse_NETStandard_FileSystemOperationContext* context)
+mfh_fuse_get_context (struct Fuse_NET_FileSystemOperationContext* context)
 {
 	struct fuse_context *from = fuse_get_context ();
 	if (from == NULL) {
@@ -461,11 +461,11 @@ mfh_fuse_get_context (struct Mono_Fuse_NETStandard_FileSystemOperationContext* c
 int
 mfh_fuse_main (int argc, void *argv, void* ops)
 {
-	struct Mono_Fuse_NETStandard_Operations *mops;
+	struct Fuse_NET_Operations *mops;
 	struct fuse_operations fops;
 	int r;
 
-	mops = (struct Mono_Fuse_NETStandard_Operations*) ops;
+	mops = (struct Fuse_NET_Operations*) ops;
 
 	_to_fuse_operations (mops, &fops);
 

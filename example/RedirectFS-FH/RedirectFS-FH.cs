@@ -7,7 +7,7 @@
 //
 // (C) 2006 Jonathan Pryor
 //
-// Mono.Fuse.NETStandard example program
+// Fuse.NET example program
 //
 
 //
@@ -36,10 +36,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Fuse.NETStandard;
+using Fuse.NET;
 using Mono.Unix.Native;
 
-namespace Mono.Fuse.NETStandard.Samples {
+namespace Fuse.NET.Samples {
 	class RedirectFHFS : FileSystem {
 
 		private string basedir;

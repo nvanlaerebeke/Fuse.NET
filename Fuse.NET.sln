@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Fuse.NETStandard", "Mono.Fuse.NETStandard\Mono.Fuse.NETStandard.csproj", "{247EAF60-7B35-444D-9B7D-13CBD76B7FA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fuse.NET", "Fuse.NET\Fuse.NET.csproj", "{247EAF60-7B35-444D-9B7D-13CBD76B7FA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloFS", "example\HelloFS\HelloFS.csproj", "{FF21B641-C21D-401B-9450-E68DFDA09C07}"
 EndProject

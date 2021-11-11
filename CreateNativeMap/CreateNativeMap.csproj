@@ -2,8 +2,8 @@
   <PropertyGroup>
     <PackageId>CreateNativeMap</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
-    <Authors>Miguel de Icaza, Jonathan Pryor, Alexey Kolpakov</Authors>
-    <Description>Port of mono's `create-native-map` tool to NET Standart</Description>
+    <Authors>Miguel de Icaza, Jonathan Pryor, Alexey Kolpakov, Nico van Laerebeke</Authors>
+    <Description>Port of mono's `create-native-map` tool to NET 5</Description>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
@@ -11,6 +11,6 @@
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Fuse.NETStandard\Mono.Fuse.NETStandard.csproj" />
+    <ProjectReference Include="..\Fuse.NET\Fuse.NET.csproj" />
   </ItemGroup>
 </Project>
