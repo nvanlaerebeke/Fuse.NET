@@ -58,6 +58,6 @@ assert_exists libtool
 assert_exists gcc
 init_configuration
 clean
-build_managed
 build_native
+build_managed
 build_samples
