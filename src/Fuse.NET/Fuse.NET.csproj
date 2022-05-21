@@ -2,8 +2,8 @@
   <PropertyGroup>
     <AssemblyTitle>Fuse.NET.dll</AssemblyTitle>
     <AssemblyName>Fuse.NET</AssemblyName>
-    <PackageId>Fuse.NET</PackageId>
-    <PackageVersion>0.0.2</PackageVersion>
+    <PackageId>FileSystem.Fuse.NET</PackageId>
+    <PackageVersion>0.0.3</PackageVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/nvanlaerebeke/Fuse.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nvanlaerebeke/Fuse.NET</RepositoryUrl>

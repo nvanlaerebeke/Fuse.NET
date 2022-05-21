@@ -380,13 +380,15 @@ namespace Fuse.NET {
 			ops.init = _OnInit;
 			ops.destroy = _OnDestroy;
 			foreach (string method in operations.Keys) {
-				MethodInfo m = this.GetType().GetMethod (method, 
-						BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
-				MethodInfo bm = m.GetBaseDefinition ();
-				if (m.DeclaringType == typeof(FileSystem) ||
-						bm == null || bm.DeclaringType != typeof(FileSystem))
-					continue;
-				CopyOperation op = operations [method];
+				var m = this.GetType().GetMethod (method,  BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+				
+				if (m is not null)
+				{
+					var bm = m.GetBaseDefinition ();
+					if (m.DeclaringType == typeof(FileSystem) || bm.DeclaringType != typeof(FileSystem)) continue;
+				}
+
+				var op = operations [method];
 				op (ops, this);
 			}
 
@@ -399,8 +401,7 @@ namespace Fuse.NET {
 		{
 			// some methods need to be overridden in sets for sane operation
 			if (ops.opendir != null && ops.releasedir == null)
-				throw new InvalidOperationException (
-						"OnReleaseDirectory() must be overridden if OnOpenDirectory() is overridden.");
+				throw new InvalidOperationException ("OnReleaseDirectory() must be overridden if OnOpenDirectory() is overridden.");
 		}
 
 		public void Dispose ()
